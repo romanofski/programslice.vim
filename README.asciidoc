@@ -1,0 +1,7 @@
+programslice.vim
+================
+Róman Joost <roman@bromeco.de>
+
+Vim plugin to slice your Python programs with programslice.
+
+image::screenshot.png[Screenshot]
