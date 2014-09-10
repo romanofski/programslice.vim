@@ -1,0 +1,82 @@
+*programslice.txt*  For Vim version 7.3     Last change: 2014 Sept 11
+
+                               Reference Manual ~
+
+                                                        *programslice-toc*
+
+1. Installation                                         |programslice-intro|
+2. Slicing                                              |programslice-slicing|
+
+
+
+==========================================================================
+*programslice-intro*
+
+Installation~
+
+You need two components to install programslice. There is the vim plugin
+(programslice.vim) and the python program (programslice).
+
+Install programslice like any regular python module (e.g. using pip):
+>
+    $ pip install programslice
+<
+Install the vim plugin with Vundle:>
+
+    Plugin 'romanofski/programslice.vim'
+
+<
+
+
+*programslice-slicing*
+
+Slicing~
+
+Use the ex command to slice the current line in a buffer with Python
+code:
+>
+    :SliceBuffer
+<
+in a vim session. Depending lines will be marked if the slicing is
+successful. If the slicing returns no result, nothing will be highlighted.
+
+You can also toggle the slicing with:
+>
+    :ToggleSliceBuffer
+<
+
+*programslice-configuration*
+
+Configuration~
+
+Marker Color
+
+You can overwrite the highlight group depending lines are marked:
+>
+    let g:programslice_dependent_lines = 'WarningMsg'
+<
+A list of possible groups to link against can be obtained in a vim
+session by:
+>
+    :highlight
+<
+
+*programslice-cmd*
+Path to the Command Line Utility
+
+You may need to set the path to the command line utility manually if
+``programslice`` is not installed in your ``$PATH``. For example, in
+your ``vim.rc`` add
+>
+    let g:programslice_cmd = "/home/user/programslice/bin/programslice"
+<
+
+
+Toggle Slicing
+
+You can bind the slicing to a function key if you want::
+>
+    autocmd FileType python map <F9> :ToggleSliceBuffer<CR>
+<
+==============================================================================
+vim:tw=78:fo=tcq2:isk=!-~,^*,^\|,^\":ts=8:ft=help:norl:
