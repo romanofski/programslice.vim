@@ -23,8 +23,10 @@ if !exists('g:programslice_cmd')
     let g:programslice_cmd = "programslice"
 endif
 if !executable(g:programslice_cmd)
-    echoerr "Can't find the `programslice` command in the current $PATH."
-    echoerr "You may need to adjust the g:programslice_cmd in your .vimrc"
+    echohl WarningMsg
+    echomsg "Can't find the `programslice` command in the current $PATH."
+    echomsg "You may need to adjust the g:programslice_cmd in your .vimrc or install programslice Python program."
+    echohl
     finish
 endif
 
