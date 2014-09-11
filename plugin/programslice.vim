@@ -52,38 +52,36 @@ exe 'command! -buffer -nargs=0 ClearSliceMatches :call s:ClearSliceMatches()'
 " Simple slice which only highlights line numbers.
 "
 function! s:HighlightLineNumbers()
-    let lines = s:SliceBuffer('linenumbers')
+    let curpos = getcurpos()
+    let lines = s:VimSliceBuffer(curpos[1])
     for line in lines
         let lineno = join(['\%', line, 'l\n\@!'], '')
         let mID = matchadd('ProgramSlice', lineno)
     endfor
+    call setpos('.', curpos)
 endfunction
 command! -nargs=0 SliceBuffer :call s:HighlightLineNumbers()
 
 " Helper methods
 "
 
-" Runs the slice from the current line
-"
-function! s:SliceBuffer(output)
-python << EOF
-import vim
-from programslice import glue
+function! s:VimSliceBuffer(pos)
+    " Write the current buffer to a temporary file in order to pass it
+    " to programslice as an option
+    "
+    let tempin = tempname()
+    let start = line(1)
+    let end = search('\%$') - 1
+    let contents = getline(start, end)
+    call writefile(contents, tempin)
 
-cmd = vim.eval('string(g:programslice_cmd)')
-output = vim.eval('string(a:output)')
-currentlineno, col = vim.current.window.cursor
-contents = vim.current.buffer[:]
-contents = '\n'.join(contents) + '\n'
-vimenc = vim.eval('&encoding')
-if vimenc:
-    contents = contents.decode(vimenc)
-result = glue(cmd, contents, currentlineno, output=output)
-vim.command('let result = %s' % result)
-EOF
-return result
+    " Now slice the program from the current cursor position. We expect
+    " the default is only line numbers.
+    let cmd = printf('%s %s %d', g:programslice_cmd, tempin, a:pos)
+    let stdout = call('system', [cmd])
+    let result = split(stdout, '\n')
+    return result
 endfunction
-
 
 " Returns a positive integer if the current buffer is sliced.
 "
