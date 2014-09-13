@@ -6,3 +6,26 @@ Vim plugin to slice your Python programs with
 https://github.com/romanofski/programslice[programslice].
 
 image::screenshot.png[Screenshot]
+
+Installation
+------------
+
+Get programslice first. At this moment it is not available on pypi, so
+github is your best bet:
+
+[source, bash]
+----
+$ pip install https://github.com/romanofski/programslice.git
+----
+
+Install the vim plugin preferably through Vundle:
+
+[source, VimL]
+----
+" Installation via Vundle
+Plugin 'romanofski/programslice.vim'
+
+" Tell the plugin where to find the command if it's not easily reachable
+" from you PATH
+let g:programslice_cmd = "/home/user/programslice/bin/programslice"
+----
