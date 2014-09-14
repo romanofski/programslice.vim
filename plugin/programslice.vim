@@ -96,8 +96,14 @@ endfunction
 " Parse the result
 "
 function! s:ParseSliceResult(stdout)
+    if match(a:stdout, 'Traceback') == 0
+        echoerr a:stdout
+        return []
+    endif
+
     let lines = split(a:stdout, '\n')
     let parsed = []
+
     for l in lines
         " TODO: if line starts with 'usage' we ran into an API
         " incompatibility, since we've passed wrong arguments to the
