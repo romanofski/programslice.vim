@@ -89,15 +89,28 @@ function! s:VimSliceBuffer(pos, curword)
     "   command filename word linenumber column
     let cmd = printf('%s %s %s %d %d', g:programslice_cmd, tempin, a:curword, a:pos[1], a:pos[2] - 1)
     let stdout = call('system', [cmd])
-    let result = s:ParseSliceResult(stdout)
+    let result = s:ParseSliceResult(cmd, stdout)
     return result
 endfunction
 
 " Parse the result
+" `cmd` is only needed if we need to log the Traceback in case of an
+" error.
+" Errors are appended to the debug file.
 "
-function! s:ParseSliceResult(stdout)
+function! s:ParseSliceResult(cmd, stdout)
     if match(a:stdout, 'Traceback') == 0
-        echoerr a:stdout
+        let ermsg = "Error occured. Set g:programslice_debug_file to point to a file to see a Traceback"
+        if exists("g:programslice_debug_file")
+            let ermsg = ermsg ." Traceback written to: " . g:programslice_debug_file
+        endif
+        echoerr ermsg
+        if exists("g:programslice_debug_file")
+            execute 'redir >> ' . g:programslice_debug_file
+            echo "Invoked with: " . a:cmd . "\n\n"
+            echo a:stdout
+            silent! redir END
+        endif
         return []
     endif
 
