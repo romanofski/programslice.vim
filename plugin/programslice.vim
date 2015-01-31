@@ -49,38 +49,83 @@ function! s:ClearSliceMatches()
 endfunction
 exe 'command! -buffer -nargs=0 ClearSliceMatches :call s:ClearSliceMatches()'
 
-" Simple slice which only highlights line numbers.
+" Slices by variable, not by line numbers. This is much more fine
+" grained.
 "
-function! s:HighlightLineNumbers()
+function! s:HighlightByVariable()
+    let curword = expand("<cword>")
     let curpos = getcurpos()
-    let lines = s:VimSliceBuffer(curpos[1])
-    for line in lines
-        let lineno = join(['\%', line, 'l\n\@!'], '')
-        let mID = matchadd('ProgramSlice', lineno)
+    let results = s:VimSliceBuffer(curpos, curword)
+
+    for [var, lineno, offset] in results
+        " match everything in line \%l from column \%>c to column \%<c.
+        " Use the length of the variable returned by programslice.
+        " Check ;help patterns
+        "
+        let wlength = offset + strlen(var) + 1
+        let pattern = join(['\%', lineno, 'l\%>', offset, 'c\%<', wlength, 'c'], '')
+        let mID = matchadd('ProgramSlice', pattern)
     endfor
     call setpos('.', curpos)
 endfunction
-command! -nargs=0 SliceBuffer :call s:HighlightLineNumbers()
+command! -nargs=0 SliceBuffer :call s:HighlightByVariable(<args>)
 
 " Helper methods
 "
 
-function! s:VimSliceBuffer(pos)
+function! s:VimSliceBuffer(pos, curword)
     " Write the current buffer to a temporary file in order to pass it
     " to programslice as an option
     "
     let tempin = tempname()
     let start = line(1)
-    let end = search('\%$') - 1
+    let end = search('\%$')
     let contents = getline(start, end)
     call writefile(contents, tempin)
 
     " Now slice the program from the current cursor position. We expect
     " the default is only line numbers.
-    let cmd = printf('%s %s %d', g:programslice_cmd, tempin, a:pos)
+    " signature:
+    "   command filename word linenumber column
+    let cmd = printf('%s %s %s %d %d', g:programslice_cmd, tempin, a:curword, a:pos[1], a:pos[2] - 1)
     let stdout = call('system', [cmd])
-    let result = split(stdout, '\n')
+    let result = s:ParseSliceResult(cmd, stdout)
     return result
+endfunction
+
+" Parse the result
+" `cmd` is only needed if we need to log the Traceback in case of an
+" error.
+" Errors are appended to the debug file.
+"
+function! s:ParseSliceResult(cmd, stdout)
+    if match(a:stdout, 'Traceback') == 0
+        let ermsg = "Error occured. Set g:programslice_debug_file to point to a file to see a Traceback"
+        if exists("g:programslice_debug_file")
+            let ermsg = ermsg ." Traceback written to: " . g:programslice_debug_file
+        endif
+        echoerr ermsg
+        if exists("g:programslice_debug_file")
+            execute 'redir >> ' . g:programslice_debug_file
+            echo "Invoked with: " . a:cmd . "\n\n"
+            echo a:stdout
+            silent! redir END
+        endif
+        return []
+    endif
+
+    let lines = split(a:stdout, '\n')
+    let parsed = []
+
+    for l in lines
+        " TODO: if line starts with 'usage' we ran into an API
+        " incompatibility, since we've passed wrong arguments to the
+        " commandline utility
+        " https://github.com/romanofski/programslice.vim/issues/1
+        let tuple = split(l, ',')
+        call add(parsed, tuple)
+    endfor
+    return parsed
 endfunction
 
 " Returns a positive integer if the current buffer is sliced.
@@ -103,7 +148,7 @@ function! s:ToggleSlice()
     if is_highlighted == 1
         call s:ClearSliceMatches()
     else
-        call s:HighlightLineNumbers()
+        call s:HighlightByVariable()
     endif
 endfunction
 command! -nargs=0 ToggleSliceBuffer :call s:ToggleSlice()

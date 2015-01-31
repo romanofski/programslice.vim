@@ -15,7 +15,7 @@ github is your best bet:
 
 [source, bash]
 ----
-$ pip install https://github.com/romanofski/programslice.git
+$ pip install https://github.com/romanofski/programslice/archive/master.zip
 ----
 
 Install the vim plugin preferably through Vundle:
@@ -28,4 +28,8 @@ Plugin 'romanofski/programslice.vim'
 " Tell the plugin where to find the command if it's not easily reachable
 " from you PATH
 let g:programslice_cmd = "/home/user/programslice/bin/programslice"
+
+" In case an error occurs, set g:programslice_debug_file to log the
+" traceback:
+let g:programslice_debug_file = "/tmp/programslice.debug"
 ----
