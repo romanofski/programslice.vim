@@ -4,30 +4,11 @@
 
                                                         *programslice-toc*
 
-1. Installation                                         |programslice-intro|
-2. Slicing                                              |programslice-slicing|
+1. Slicing                                              |programslice-slicing|
 
 
 
 ==========================================================================
-*programslice-intro*
-
-Installation~
-
-You need two components to install programslice. There is the vim plugin
-(programslice.vim) and the python program (programslice).
-
-Install programslice like any regular python module (e.g. using pip):
->
-    $ pip install programslice
-<
-Install the vim plugin with Vundle:>
-
-    Plugin 'romanofski/programslice.vim'
-
-<
-
-
 *programslice-slicing*
 
 Slicing~
