@@ -52,6 +52,14 @@ your ``vim.rc`` add
     let g:programslice_cmd = "/home/user/programslice/bin/programslice"
 <
 
+programslice-debugfile
+Use a log for debugging
+
+You may set a file to debug how the command line utility is invoked:
+
+
+    let g:programslice_debug_file = "/tmp/programslice.debug"
+
 
 Toggle Slicing
 
