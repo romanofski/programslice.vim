@@ -93,6 +93,17 @@ function! s:VimSliceBuffer(pos, curword)
     return result
 endfunction
 
+" logs to debug file
+function! s:LogToFile(cmd, stdout)
+    if exists("g:programslice_debug_file")
+        execute 'redir >> ' . g:programslice_debug_file
+        silent echo "Invoked with: " . a:cmd . "\n\n"
+        silent echo a:stdout
+        silent! redir END
+    endif
+endfunction
+
+
 " Parse the result
 " `cmd` is only needed if we need to log the Traceback in case of an
 " error.
@@ -101,18 +112,12 @@ endfunction
 function! s:ParseSliceResult(cmd, stdout)
     if match(a:stdout, 'Traceback') == 0
         let ermsg = "Error occured. Set g:programslice_debug_file to point to a file to see a Traceback"
-        if exists("g:programslice_debug_file")
-            let ermsg = ermsg ." Traceback written to: " . g:programslice_debug_file
-        endif
         echoerr ermsg
-        if exists("g:programslice_debug_file")
-            execute 'redir >> ' . g:programslice_debug_file
-            echo "Invoked with: " . a:cmd . "\n\n"
-            echo a:stdout
-            silent! redir END
-        endif
+        call s:LogToFile(a:cmd, a:stdout)
         return []
     endif
+
+    call s:LogToFile(a:cmd, a:stdout)
 
     let lines = split(a:stdout, '\n')
     let parsed = []

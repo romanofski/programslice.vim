@@ -20,7 +20,7 @@ $ pip install https://github.com/romanofski/programslice/archive/master.zip
 
 Install the vim plugin preferably through Vundle:
 
-[source, VimL]
+[source, vim]
 ----
 " Installation via Vundle
 Plugin 'romanofski/programslice.vim'
@@ -29,7 +29,7 @@ Plugin 'romanofski/programslice.vim'
 " from you PATH
 let g:programslice_cmd = "/home/user/programslice/bin/programslice"
 
-" In case an error occurs, set g:programslice_debug_file to log the
-" traceback:
+" If you want to know what is happening and how the vim plugin calls
+" programslice, set g:programslice_debug_file to log call and output
 let g:programslice_debug_file = "/tmp/programslice.debug"
 ----
