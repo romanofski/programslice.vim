@@ -37,6 +37,38 @@ endif
 execute 'highlight link ProgramSlice ' . g:programslice_dependent_lines
 
 
+" Checks programslice version
+"
+function! s:UserShouldUpgrade()
+    let cmd = printf('%s --version', g:programslice_cmd)
+    let stdout = call('system', [cmd])
+    " Note: version refers to vim's version
+    let pversion = str2nr(join(split(stdout, '\.'), ''))
+
+    let versiondiff = printf('programslice: %i - vim plugin: %i', pversion, g:programslice#version)
+
+    if pversion > g:programslice#version
+        echomsg "Version of programslice command is newer: " . versiondiff
+        echomsg "Please upgrade this vim plugin."
+        echomsg "Follow installation instructions on: https://github.com/romanofski/programslice.vim"
+    elseif pversion < g:programslice#version
+        echomsg "Version of programslice command is older: " . versiondiff
+        echomsg "Please upgrade programslice."
+        echomsg "Follow installation instructions on: https://github.com/romanofski/programslice"
+    endif
+endfunction
+
+" Programslice VIM plugin version
+" This version should always match up with programslice
+"
+if !exists('g:programslice_disable_version_check')
+    let g:programslice#version = 3
+
+    " check compatibility with command utility
+    call s:UserShouldUpgrade()
+endif
+
+
 " Cleares all highlighted lines
 "
 function! s:ClearSliceMatches()

@@ -61,6 +61,13 @@ You may set a file to debug how the command line utility is invoked:
     let g:programslice_debug_file = "/tmp/programslice.debug"
 
 
+programslice-version
+Disable version check
+
+You may disable the version check by setting:
+
+    let g:programslice_disable_version_check = 1
+
 Toggle Slicing
 
 You can bind the slicing to a function key if you want::

@@ -24,7 +24,15 @@ Install the vim plugin preferably through Vundle:
 ----
 " Installation via Vundle
 Plugin 'romanofski/programslice.vim'
+----
 
+Configuration
+-------------
+
+You can set the following variables:
+
+[source, vim]
+----
 " Tell the plugin where to find the command if it's not easily reachable
 " from you PATH
 let g:programslice_cmd = "/home/user/programslice/bin/programslice"
@@ -32,4 +40,7 @@ let g:programslice_cmd = "/home/user/programslice/bin/programslice"
 " If you want to know what is happening and how the vim plugin calls
 " programslice, set g:programslice_debug_file to log call and output
 let g:programslice_debug_file = "/tmp/programslice.debug"
+
+" Disable the version check
+let g:programslice_disable_version_check = 1
 ----
