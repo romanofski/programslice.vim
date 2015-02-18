@@ -43,7 +43,8 @@ function! s:UserShouldUpgrade()
     let cmd = printf('%s --version', g:programslice_cmd)
     let stdout = call('system', [cmd])
     " Note: version refers to vim's version
-    let pversion = str2nr(join(split(stdout, '\.'), ''))
+    let split_version = split(stdout, '\.')
+    let pversion = str2nr(join(split_version[:1], ''))
 
     let versiondiff = printf('programslice: %i - vim plugin: %i', pversion, g:programslice#version)
 
